@@ -1,0 +1,9 @@
+# Local Netlify folder
+.netlify
+.env
+.env.development
+.env.local
+ballunia-api/.env
+ballunia-app/.env
+node_modules
+dist
