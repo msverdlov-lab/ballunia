@@ -6,14 +6,17 @@ import Bundle from "./pages/Bundle.jsx";
 import Cart from "./pages/Cart.jsx";
 
 import { Link } from "react-router-dom";
+import { useCart } from "./cart/CartContext";
 
 export default function App() {
+  const { totalQty } = useCart();
+  
   return (
     <BrowserRouter>
-      <nav style={{ padding: "1rem", borderBottom: "1px solid #ddd" }}>
+      <nav style={{ position: "sticky", top: 0, background: "#fff", zIndex: 1000, padding: "1rem", borderBottom: "1px solid #ddd" }}>
         <Link to="/" style={{ marginRight: "1rem" }}>Shop</Link>
         <Link to="/bundle" style={{ marginRight: "1rem" }}>Bundle Builder</Link>
-        <Link to="/cart">Cart</Link>
+        <Link to="/cart">Cart ({totalQty})</Link>
       </nav>
 
       <Routes>

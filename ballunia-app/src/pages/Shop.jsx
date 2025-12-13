@@ -1,11 +1,43 @@
 import React from "react";
+import { useRef } from "react";
+
 import { useProducts } from "../hooks/useProducts";
+import { useCart } from "../cart/CartContext";
 
 export default function Shop() {
   const { products, loading, error } = useProducts();
+  const { addItem } = useCart();
+  const addLocks = useRef({});
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>Error loading products.</p>;
+
+  {/* Lock add to cart buttom after click to avoid double-cart add*/}
+  const handleAddToCart = (product) => {
+  const key = product.sku || product.id;
+
+  // If locked, ignore click
+  if (addLocks.current[key]) return;
+
+  // Lock immediately
+  addLocks.current[key] = true;
+
+  addItem({
+    type: "product",
+    name: product.name,
+    price: product.price,
+    imageUrl: product.imageUrl,
+    product: {
+      sku: product.sku,
+    },
+  });
+
+  // Unlock after short delay
+  setTimeout(() => {
+    addLocks.current[key] = false;
+  }, 300);
+};
+
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -67,8 +99,10 @@ export default function Shop() {
             {/* PRICE */}
             <p>${product.price}</p>
 
-            {/* ADD TO CART BUTTON — will wire up soon */}
-            <button>Add to Cart</button>
+            {/* ADD TO CART BUTTON - uses lock delay to avoid double-cart add*/}
+            <button onClick={() => handleAddToCart(product)}>
+              Add to Cart
+            </button>
 
           </div>
         ))}
