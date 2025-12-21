@@ -85,6 +85,22 @@ function reducer(state, action) {
       return state.map((x) => (x.id === id ? { ...x, quantity: q } : x));
     }
 
+    case "UPDATE_ITEM": {
+      const { id, updates } = action.payload;
+
+      return state.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              ...updates,
+              bundle: updates.bundle
+                ? { ...item.bundle, ...updates.bundle }
+                : item.bundle,
+            }
+          : item
+    );
+}
+
     case "CLEAR":
       return [];
 
@@ -117,6 +133,7 @@ export function CartProvider({ children }) {
       addItem: (item) => dispatch({ type: "ADD_ITEM", payload: item }),
       removeItem: (id) => dispatch({ type: "REMOVE_ITEM", payload: id }),
       setQty: (id, quantity) => dispatch({ type: "SET_QTY", payload: { id, quantity } }),
+      updateItem: (id, updates) => dispatch({ type: "UPDATE_ITEM", payload: { id, updates } }),
       clear: () => dispatch({ type: "CLEAR" }),
     }),
     [items, subtotal, totalQty]

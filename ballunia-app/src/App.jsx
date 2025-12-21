@@ -23,6 +23,7 @@ export default function App() {
         <Route path="/" element={<Shop />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/bundle" element={<Bundle />} />
+        <Route path="/bundle/:templateNK" element={<Bundle />} />
         <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
