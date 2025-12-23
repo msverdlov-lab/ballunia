@@ -14,7 +14,7 @@ exports.handler = async (event) => {
     }
 
     // Airtable connection
-    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_PAT }).base(
       process.env.AIRTABLE_BASE_ID
     );
 

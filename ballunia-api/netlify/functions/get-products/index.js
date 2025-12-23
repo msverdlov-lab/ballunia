@@ -2,7 +2,7 @@ const Airtable = require("airtable");
 
 exports.handler = async () => {
   try {
-    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_PAT })
       .base(process.env.AIRTABLE_BASE_ID);
 
     // Step 1: Fetch all products
