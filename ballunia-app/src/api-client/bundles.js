@@ -70,10 +70,9 @@ export async function getBundleConfig(templateNK) {
 }
 
 export async function getBundleTemplates() {
-  const res = await fetch(
-    "http://localhost:8888/.netlify/functions/get-bundle-templates"
-  );
-
+  //const res = await fetch("http://localhost:8888/.netlify/functions/get-bundle-templates");
+  const res = await fetch(`${API_BASE}/get-bundle-templates`);
+  
   if (!res.ok) {
     throw new Error("Failed to load bundle templates");
   }
