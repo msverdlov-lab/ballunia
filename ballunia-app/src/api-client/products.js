@@ -3,7 +3,7 @@
 export async function fetchProducts() {
   //const url = "/.netlify/functions/get-products";
   //const response = await fetch("http://localhost:8888/.netlify/functions/get-products");
-  const response = await fetch(`${API_BASE}/get-products`);
+  const response = await fetch(`${API_BASE}/.netlify/functions/get-products`);
   if (!response.ok) throw new Error("Failed to load products");
   return await response.json();
 
