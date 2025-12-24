@@ -1,5 +1,7 @@
 // src/api-client/bundles.js
 
+import { API_BASE } from './config';
+
 export async function getBundleConfig(templateNK) {
   console.log("Fetching bundle config for templateNK:", templateNK);
 
