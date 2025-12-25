@@ -6,7 +6,8 @@ export async function getBundleConfig(templateNK) {
   console.log("Fetching bundle config for templateNK:", templateNK);
 
   //const res = await fetch(`http://localhost:8888/.netlify/functions/get-bundle-config?templateNK=${templateNK}`);
-  const res = await fetch(`${API_BASE}/.netlify/functions/get-bundle-config?templateNK=${templateNK}`);
+  //const res = await fetch(`${API_BASE}/.netlify/functions/get-bundle-config?templateNK=${templateNK}`);
+  const res = await fetch(`${API_BASE}/get-bundle-config?templateNK=${templateNK}`);
   console.log("Fetch Response status:", res.status);
   console.log("Fetch Response ok:", res.ok);
 
@@ -73,7 +74,8 @@ export async function getBundleConfig(templateNK) {
 
 export async function getBundleTemplates() {
   //const res = await fetch("http://localhost:8888/.netlify/functions/get-bundle-templates");
-  const res = await fetch(`${API_BASE}/.netlify/functions/get-bundle-templates`);
+  //const res = await fetch(`${API_BASE}/.netlify/functions/get-bundle-templates`);
+  const res = await fetch(`${API_BASE}/get-bundle-templates`);
   
   if (!res.ok) {
     throw new Error("Failed to load bundle templates");
