@@ -3,6 +3,32 @@ export default async (req, context) => {
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const TABLE_NAME = "Delivery Windows";
 
+  // --- START UNIVERSAL CORS LOGIC ---
+  // Add '|| {}' to prevent crashing if headers are missing
+  // Add '?.origin' to safely check for the property
+  const origin = (req.headers || {})['origin'] || req.headers?.origin;
+
+  const allowedOrigins = [
+    "https://shop.ballunia.com",
+    "http://localhost:5173",
+    "http://localhost:8888"
+  ];
+  
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : "https://shop.ballunia.com";
+
+  const CORS_HEADERS = {
+    "Access-Control-Allow-Origin": corsOrigin,
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Vary": "Origin"
+  };
+
+  // Handle Preflight immediately
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+  // --- END UNIVERSAL CORS LOGIC ---
+
   const url = new URL(req.url);
   const zip = url.searchParams.get("zip"); // we'll use ?zip=07039 instead of ?territory=Livingston
 
@@ -20,8 +46,6 @@ export default async (req, context) => {
     const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
       TABLE_NAME
     )}?filterByFormula=${encodeURIComponent(filterFormula)}&sort[0][field]=Delivery%20Window%20Date&sort[0][direction]=asc`;
-
-    console.log("🔗 Airtable URL:", airtableUrl);
 
     const response = await fetch(airtableUrl, {
       headers: { Authorization: `Bearer ${AIRTABLE_PAT}` },
@@ -52,15 +76,22 @@ export default async (req, context) => {
     return new Response(JSON.stringify(windows), {
       status: 200,
       headers: {
-        "content-type": "application/json",
-        "access-control-allow-origin": "*",
+        "Content-Type": "application/json",
+        ...CORS_HEADERS, // Apply dynamic headers here
       },
     });
+
   } catch (error) {
     console.error("❌ Delivery windows API error:", error.message);
     return new Response(
       JSON.stringify({ error: "Failed to fetch delivery windows", details: error.message }),
-      { status: 500, headers: { "content-type": "application/json" } }
+      { 
+        status: 500, 
+        headers: { 
+          "content-type": "application/json",
+        ...CORS_HEADERS // Ensure errors also return CORS headers 
+        }
+      }
     );
   }
 };

@@ -1,0 +1,9 @@
+# 1. Map /api/ paths to functions (for your Squarespace calls)
+/api/* /.netlify/functions/:splat  200
+
+# 2. Map clean top-level paths to functions 
+# (e.g., /service-area-check -> functions/service-area-check)
+/* /.netlify/functions/:splat  200
+
+# NOTE: Since we didn't use "!", your index.html will still 
+# show up when people visit the home page.

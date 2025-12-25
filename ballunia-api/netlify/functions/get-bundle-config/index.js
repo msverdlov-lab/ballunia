@@ -2,6 +2,34 @@
 const Airtable = require("airtable");
 
 exports.handler = async (event) => {
+  // --- 1. UNIVERSAL CORS LOGIC ---
+  // Add '|| {}' to prevent crashing if headers are missing
+  // Add '?.origin' to safely check for the property
+  const origin = (event.headers || {})['origin'] || event.headers?.origin;
+  
+  const allowedOrigins = [
+    "https://shop.ballunia.com",
+    "http://localhost:5173",
+    "http://localhost:8888"
+  ];
+
+  // Match the origin or default to production
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : "https://shop.ballunia.com";
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": corsOrigin,
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Vary": "Origin"
+  };
+
+  // Handle Preflight (OPTIONS) immediately
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers };
+  }
+  // --- END UNIVERSAL CORS LOGIC ---
+  
   try {
     const params = event.queryStringParameters;
     const templateNK = params?.templateNK;
@@ -9,6 +37,7 @@ exports.handler = async (event) => {
     if (!templateNK) {
       return {
         statusCode: 400,
+        headers, // Use shared headers for errors
         body: JSON.stringify({ error: "Missing templateNK parameter" }),
       };
     }
@@ -29,6 +58,7 @@ exports.handler = async (event) => {
     if (templateRecords.length === 0) {
       return {
         statusCode: 404,
+        headers, // Use shared headers for errors
         body: JSON.stringify({ error: "Bundle Template not found" }),
       };
     }
@@ -77,9 +107,6 @@ exports.handler = async (event) => {
       }
 
       return imageUrl; // Return the now-HTTPS URL
-      ////const attachment = imageRecord.fields["Image"]?.[0];
-      //const attachment = imageRecord.fields["Image (Attachment)"]?.[0];
-      //return attachment?.url || null;
     };
 
     const main = [];
@@ -124,6 +151,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
+      headers, // Use shared headers for errors
       body: JSON.stringify({
         template: {
           nk: template["Bundle Template NK"],
@@ -138,12 +166,12 @@ exports.handler = async (event) => {
           weight,
         },
       }),
-      headers: { "Access-Control-Allow-Origin": "*" },
     };
   } catch (err) {
-    console.error("get-bundle-config error:", err);
+    console.error(`❌ Error fetching config for NK ${templateNK}:`, err.message);
     return {
       statusCode: 500,
+      headers, // Use shared headers for errors
       body: JSON.stringify({ error: err.toString() }),
     };
   }
