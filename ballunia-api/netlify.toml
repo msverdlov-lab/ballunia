@@ -1,8 +1,4 @@
-[build]
-  publish = "public"
-
 [functions]
-  # Move this out of [build]
   directory = "netlify/functions"
 
 [[redirects]]
